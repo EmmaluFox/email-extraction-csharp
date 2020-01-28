@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace EmailExtraction
 {
@@ -6,7 +7,8 @@ namespace EmailExtraction
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var fileContents = File.ReadAllText("Data/sample.txt");
+            Console.WriteLine(fileContents);
         }
     }
 }
