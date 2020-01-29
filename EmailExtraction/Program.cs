@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -14,7 +15,31 @@ namespace EmailExtraction
 
             var matches = searchRegex.Matches(fileContents);
 
-            Console.WriteLine($"Fount {matches.Count} matches for {pattern} in the file.");
+            var domains = new Dictionary<string, int>();
+            foreach (Match match in matches)
+            {
+                var groups = match.Groups;
+                var domain = groups[0].Value;
+
+                if (domains.ContainsKey(domain))
+                {
+                    domains[domain]++;
+                }
+                else
+                {
+                    domains.Add(domain, 1);
+                }
+            }
+
+            PrintDomains(domains);
+        }
+
+        private static void PrintDomains(Dictionary<string, int> dictionary)
+        {
+            foreach (var keyValuePair in dictionary)
+            {
+                Console.WriteLine($"{keyValuePair.Key}: {keyValuePair.Value}");
+            }
         }
     }
 }
