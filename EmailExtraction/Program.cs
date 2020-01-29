@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace EmailExtraction
 {
@@ -9,20 +9,12 @@ namespace EmailExtraction
         static void Main(string[] args)
         {
             var fileContents = File.ReadAllText("Data/sample.txt");
-            var searchTerm = "@softwire.com";
+            const string pattern = @"\S+@softwire.com\b";
+            var searchRegex = new Regex(pattern);
 
-            var finalSubstringIndex = fileContents.Length - searchTerm.Length - 1;
+            var matches = searchRegex.Matches(fileContents);
 
-            var numberOfMatches = 0;
-            foreach (var index in Enumerable.Range(0, finalSubstringIndex))
-            {
-                if (fileContents.Substring(index, searchTerm.Length) == searchTerm)
-                {
-                    numberOfMatches++;
-                }
-            }
-
-            Console.WriteLine($"Fount {numberOfMatches} matches for {searchTerm} in the file.");
+            Console.WriteLine($"Fount {matches.Count} matches for {pattern} in the file.");
         }
     }
 }
