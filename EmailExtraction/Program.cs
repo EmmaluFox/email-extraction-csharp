@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace EmailExtraction
@@ -10,7 +11,7 @@ namespace EmailExtraction
         static void Main(string[] args)
         {
             var fileContents = File.ReadAllText("Data/sample.txt");
-            const string pattern = @"\S+@softwire.com\b";
+            const string pattern = @"\S+@(?<domain>\S+)\b";
             var searchRegex = new Regex(pattern);
 
             var matches = searchRegex.Matches(fileContents);
@@ -19,7 +20,7 @@ namespace EmailExtraction
             foreach (Match match in matches)
             {
                 var groups = match.Groups;
-                var domain = groups[0].Value;
+                var domain = groups["domain"].Value;
 
                 if (domains.ContainsKey(domain))
                 {
@@ -31,14 +32,17 @@ namespace EmailExtraction
                 }
             }
 
-            PrintDomains(domains);
+            var domainList = domains.ToList();
+            domainList.Sort((left, right) => right.Value.CompareTo(left.Value));
+            
+            PrintDomains(domainList);
         }
 
-        private static void PrintDomains(Dictionary<string, int> dictionary)
+        private static void PrintDomains(IEnumerable<KeyValuePair<string, int>> domains)
         {
-            foreach (var keyValuePair in dictionary)
+            foreach (var (key, value) in domains)
             {
-                Console.WriteLine($"{keyValuePair.Key}: {keyValuePair.Value}");
+                Console.WriteLine($"{key}: {value}");
             }
         }
     }
